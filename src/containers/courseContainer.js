@@ -1,114 +1,123 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as courseActions from '../actions/courseActions';
+import * as disciplineActions from '../actions/disciplineActions';
+import { Link } from 'react-router-dom';
 
 class CourseContainer extends PureComponent {
+  constructor(props){
+    super(props);
 
-    constructor(props){
-        super(props);
-
-        this.state = {
-            course: {
-                id: '',
-                name: '',
-                location: ''
-            }
-        }
-
-        this.handleChange = this.handleChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-        this.onEditClick = this.onEditClick.bind(this);
-        this.onRemoveClick = this.onRemoveClick.bind(this);
+    this.state = {
+      discipline: {
+        id: '',
+        name: '',
+        teacher: ''
+      }
     }
 
-    handleChange(event) {
-        this.setState({
-            course: { ...this.state.course, [event.target.name]: event.target.value }
-        });
+    this.handleChange = this.handleChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onEditClick = this.onEditClick.bind(this);
+    this.onRemoveClick = this.onRemoveClick.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({
+      discipline: { ...this.state.discipline, [event.target.name]: event.target.value }
+    });
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    let action = this.props.actions.editDiscipline;
+
+    if (!this.state.discipline.id) {
+      action = this.props.actions.createDiscipline
     }
 
-    onSubmit(e) {
-        e.preventDefault();
+    action(this.state.discipline, this.props.course.id);
 
-        let action = this.props.actions.editCourse;
+    this.setState({
+      discipline: {
+        id: '',
+        name: '',
+        teacher: ''
+      }
+    })
+  }
 
-        if(!this.state.course.id) {
-            action = this.props.actions.createCourse
-        }
+  onEditClick(discipline) {
+    this.setState({
+      discipline
+    });
+  }
 
-        action(this.state.course);
+  onRemoveClick(discipline) {
+    this.props.actions.removeDiscipline(discipline.id);
+  }
 
-        this.setState({
-            course: {
-                id: '',
-                name: '',
-                location: ''
-            }
-        })
-    }
+  render() {
+    return (
+      <div>
+        <Link to='/courses'>Voltar</Link>
+        <h1>{this.props.course.name}</h1>
+        <p>{this.props.course.location}</p>
 
-    onEditClick(course) {
-        this.setState({
-            course
-        });
-    }
+        <hr />
 
-    onRemoveClick(course) {
-        this.props.actions.removeCourse(course.id);
-    }
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Professor</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
 
-    render() {
-        return (
-            <div>
-                <h1>Cursos</h1>
-                
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Local</th>
-                    </tr>  
-                    </thead>              
+          <tbody>
+            {this.props.disciplines
+              .map(discipline => (
+              <tr key={discipline.id}>
+                <td>{discipline.name}</td>
+                <td>{discipline.teacher}</td>
+                <td>
+                  <a onClick={() => { this.onEditClick(discipline) }}>Editar</a>
+                  <a onClick={() => { this.onRemoveClick(discipline) }}>Remover</a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-                    <tbody>
-                        {this.props.courses.map(course => (
-                            <tr key={course.id}>
-                                <td>{course.name}</td>
-                                <td>{course.location}</td>
-                                <td>
-                                    <a onClick={() => { this.onEditClick(course) }}>Editar</a>
-                                    <a onClick={() => { this.onRemoveClick(course) }}>Remover</a>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+        <hr />
 
-                <form>
-                    <label>Nome</label>
-                    <input name='name' onChange={this.handleChange} value={this.state.course.name} />
+        <form>
+          <label>Nome</label>
+          <input name='name' onChange={this.handleChange} value={this.state.discipline.name} />
 
-                    <label>Local</label>
-                    <input name='location' onChange={this.handleChange} value={this.state.course.location} />
+          <label>Professor</label>
+          <input name='teacher' onChange={this.handleChange} value={this.state.discipline.teacher} />
 
-                    <input type='submit' value='Salvar' onClick={this.onSubmit} />
-                </form>
-            </div>
-        )
-    }
+          <input type='submit' value='Salvar' onClick={this.onSubmit} />
+        </form>
+      </div>
+    )
+  }
 }
 
 const mapStateToProps = (state, ownProps) => {
-    return {
-        courses: state.courses
-    }
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        actions: bindActionCreators(courseActions, dispatch)
-    }
+  return {
+    course: state.courses.find(i => ownProps.match.params.id === i.id),
+    disciplines: state.disciplines.filter(i => i.courseId === ownProps.match.params.id)
+  }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CourseContainer);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(disciplineActions, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CourseContainer)
