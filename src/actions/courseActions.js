@@ -7,3 +7,7 @@ export function createCourse(course) {
 export function editCourse(course) {
     return { type: 'EDIT_COURSE', course}
 }
+
+export function removeCourse(id) {
+    return { type: 'REMOVE_COURSE', id }
+}

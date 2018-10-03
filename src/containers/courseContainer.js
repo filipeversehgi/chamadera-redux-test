@@ -19,6 +19,7 @@ class CourseContainer extends PureComponent {
         this.handleChange = this.handleChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
+        this.onRemoveClick = this.onRemoveClick.bind(this);
     }
 
     handleChange(event) {
@@ -37,7 +38,7 @@ class CourseContainer extends PureComponent {
         }
 
         action(this.state.course);
-        
+
         this.setState({
             course: {
                 id: '',
@@ -48,10 +49,13 @@ class CourseContainer extends PureComponent {
     }
 
     onEditClick(course) {
-        console.log(course);
         this.setState({
             course
         });
+    }
+
+    onRemoveClick(course) {
+        this.props.actions.removeCourse(course.id);
     }
 
     render() {
@@ -74,6 +78,7 @@ class CourseContainer extends PureComponent {
                                 <td>{course.location}</td>
                                 <td>
                                     <a onClick={() => { this.onEditClick(course) }}>Editar</a>
+                                    <a onClick={() => { this.onRemoveClick(course) }}>Remover</a>
                                 </td>
                             </tr>
                         ))}

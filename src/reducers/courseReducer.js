@@ -6,13 +6,22 @@ export default function courseReducer(state = [], action) {
                 Object.assign({}, action.course)
             ];
         
-        case 'EDIT_COURSE':
+        case 'EDIT_COURSE': {
             const i = state.findIndex(i => i.id === action.course.id);
             return [
                 ...state.slice(0, i),
                 Object.assign({}, state[i], action.course),
                 ...state.slice(i+1)
             ]
+        }
+
+        case 'REMOVE_COURSE': {
+            const i = state.findIndex(i => i.id === action.id);
+            return [
+                ...state.slice(0, i),
+                ...state.slice(i+1)
+            ]
+        }
     
         default:
             return state;
