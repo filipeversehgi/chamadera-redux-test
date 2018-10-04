@@ -14,9 +14,9 @@ export function editDiscipline(discipline, courseId) {
   }
 }
 
-export function deleteDiscipline(id) {
+export function removeDiscipline(id) {
   return {
-    type: 'DELETE_DISCIPLINE',
+    type: 'REMOVE_DISCIPLINE',
     id
   }
 }

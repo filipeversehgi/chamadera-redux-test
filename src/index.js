@@ -9,6 +9,8 @@ import Router from './Router';
 import { loadState, saveState } from './localStorage';
 import { throttle } from 'lodash';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const persistedState = loadState();
 
 const store = configureStore(persistedState);

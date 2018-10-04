@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as courseActions from '../actions/courseActions';
 import { Link } from 'react-router-dom';
+import { Row, Col, Table, Jumbotron, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 
 class CoursesContainer extends PureComponent {
 
@@ -61,43 +62,63 @@ class CoursesContainer extends PureComponent {
 
     render() {
         return (
-            <div>
-                <h1>Cursos</h1>
-                
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Local</th>
-                        <th>Ações</th>
-                    </tr>  
-                    </thead>              
+            <Row>
+                <Col md={12}>
+                    <Jumbotron style={{marginTop: 20}}>
+                        <h1 className="display-3">Cursos</h1>
+                        <p className="lead">Selecione ou crie seu curso</p>
+                        <hr className="my-2" />
+                        <p>Um curso é a maior unidade possível, exemplo: Curso de Inglês, Ciências da Computação, Design de Interiores, etc.</p>
 
-                    <tbody>
-                        {this.props.courses.map(course => (
-                            <tr key={course.id}>
-                                <td>{course.name}</td>
-                                <td>{course.location}</td>
-                                <td>
-                                    <a onClick={() => { this.onEditClick(course) }}>Editar</a>
-                                    <a onClick={() => { this.onRemoveClick(course) }}>Remover</a>
-                                    <Link to={`/courses/${course.id}`}>Acessar</Link>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                    </Jumbotron>
+                </Col>
+                <Col md={12}>
+                    <Table>
+                        <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Local</th>
+                            <th>Ações</th>
+                        </tr>  
+                        </thead>              
 
-                <form>
-                    <label>Nome</label>
-                    <input name='name' onChange={this.handleChange} value={this.state.course.name} />
+                        <tbody>
+                            {this.props.courses.map(course => (
+                                <tr key={course.id}>
+                                    <td>{course.name}</td>
+                                    <td>{course.location}</td>
+                                    <td>
+                                        <Button onClick={() => { this.onEditClick(course) }} outline color='secondary'>Editar</Button>{' '}
+                                        <Button onClick={() => { this.onRemoveClick(course) }}outline color='danger'>Remover</Button>{' '}
+                                        <Link to={`/courses/${course.id}`}>
+                                            <Button outline color='primary'>Selecionar</Button>{' '}
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </Col>
 
-                    <label>Local</label>
-                    <input name='location' onChange={this.handleChange} value={this.state.course.location} />
+                <Col md={12}>
+                    <Form>
+                        <h2>Adicionar novo curso</h2>
+                        <FormGroup>
+                            <Label>Nome</Label>
+                            <Input name='name' onChange={this.handleChange} value={this.state.course.name} />
+                        </FormGroup>
 
-                    <input type='submit' value='Salvar' onClick={this.onSubmit} />
-                </form>
-            </div>
+                        <FormGroup>
+                            <Label>Local</Label>
+                            <Input name='location' onChange={this.handleChange} value={this.state.course.location} />
+                        </FormGroup>
+
+
+                        <Button onClick={this.onSubmit}>Salvar</Button>
+                    </Form>
+
+                </Col>
+            </Row>
         )
     }
 }

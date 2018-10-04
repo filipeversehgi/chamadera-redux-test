@@ -15,8 +15,8 @@ export default function disciplineReducer(state = [], action) {
       ]
     }
 
-    case 'DELETE_DISCIPLINE': {
-      const i = state.findIndex(i => i.id === action.discipline.id);
+    case 'REMOVE_DISCIPLINE': {
+      const i = state.findIndex(i => i.id === action.id);
       return [
         ...state.slice(0, i),
         ...state.slice(i+1)
