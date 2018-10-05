@@ -1,13 +1,11 @@
-import { v4 } from 'node-uuid';
-
-export function attendClass(classe) {
-  return { type: 'CHANGE_CLASS_STATUS', classe: { ...classe, id: v4(), status: 'presenca' }}
+export function attendClass(classId) {
+  return { type: "CHANGE_CLASS_STATUS", classId, wentTo: true };
 }
 
-export function missClass(classe) {
-  return { type: 'CHANGE_CLASS_STATUS', classe: { ...classe, id: v4(), status: 'falta' } }
+export function missClass(classId) {
+  return { type: "CHANGE_CLASS_STATUS", classId, wentTo: false };
 }
 
-export function resetClass(id) {
-  return { type: 'DELETE_ATTENDANCE', id }
+export function resetClass(classId) {
+  return { type: 'CHANGE_CLASS_STATUS', classId, wentTo: undefined };
 }

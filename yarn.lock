@@ -5463,10 +5463,6 @@ node-releases@^1.0.0-alpha.11, node-releases@^1.0.0-alpha.12:
   dependencies:
     semver "^5.3.0"
 
-node-uuid@^1.4.8:
-  version "1.4.8"
-  resolved "https://registry.yarnpkg.com/node-uuid/-/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
-
 nopt@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-4.0.1.tgz#d0d4685afd5415193c8c7505602d0d17cd64474d"
@@ -6877,9 +6873,9 @@ react@^16.5.2:
     prop-types "^15.6.2"
     schedule "^0.5.0"
 
-reactstrap@^6.4.0:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/reactstrap/-/reactstrap-6.4.0.tgz#891252a284710180cd3d746dd236ee61d28a1c66"
+reactstrap@^6.5.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/reactstrap/-/reactstrap-6.5.0.tgz#ba655e32646e2621829f61faa033e607ec6624e5"
   dependencies:
     classnames "^2.2.3"
     lodash.isfunction "^3.0.9"
@@ -6967,6 +6963,10 @@ reduce-css-calc@^2.0.0:
   dependencies:
     css-unit-converter "^1.1.1"
     postcss-value-parser "^3.3.0"
+
+redux-batched-actions@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/redux-batched-actions/-/redux-batched-actions-0.4.1.tgz#a8de8cef50a1db4f009d5222820c836515597e22"
 
 redux-immutable-state-invariant@^2.1.0:
   version "2.1.0"

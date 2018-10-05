@@ -1,4 +1,4 @@
-import { v4 } from 'node-uuid';
+import { v4 } from 'uuid';
 
 export function createCourse(course) {
     return { type: 'CREATE_COURSE', course: {...course, id: v4() } }

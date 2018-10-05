@@ -1,9 +1,9 @@
-import { v4 } from 'node-uuid';
+import { v4 } from 'uuid';
 
 export function createDiscipline(discipline, courseId) {
   return {
     type: 'CREATE_DISCIPLINE',
-    discipline: {...discipline, id: v4(), courseId}
+    discipline: {...discipline, id: v4(), courseId},
   }
 }
 

@@ -2,50 +2,26 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as classActions from '../actions/classActions';
-import { Row, Col, Jumbotron, Table, Button } from 'reactstrap';
+import { Row, Col, Jumbotron, Table } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import * as moment from 'moment';
+import ClasseItem from '../components/classe-item';
 
 class DisciplineContainer extends PureComponent {
+  attendClass = classe => {
+    this.props.actions.attendClass(classe.id);
+  };
 
-  constructor(props){
-    super(props);
+  missClass = classe => {
+    this.props.actions.missClass(classe.id);
+  };
 
-    this.createClassList = this.createClassList.bind(this);
-  }
+  resetClass = classe => {
+    this.props.actions.resetClass(classe.id);
+  };
 
-  createClassList(d) {
-    const d1 = moment(d.startDate, 'DD/MM/YYYY');
-    const d2 = moment(d.endDate, 'DD/MM/YYYY');
-    const totalDays = d2.diff(d1, 'days');
-
-    console.log('TotalDays', totalDays);
-
-    let rep = 1;
-    let classList = [];
-
-    for(let i = 0; i <= totalDays; i++) {
-      const currentDay = d1.clone().add(i, 'days');
-      
-      const numberOfClasses = Object.values(d.classDays)[currentDay.isoWeekday()];
-
-      for(let j = 0; j < numberOfClasses; j++) {
-        classList.push({
-          id: rep,
-          date: currentDay.format('DD/MM/YYYY'),
-          rep,
-          status: ''
-        });
-
-        rep++;
-      }
-    }
-
-    return classList;
-  }
-  
   render() {
-    const classesList = this.createClassList(this.props.discipline);
+    console.log("Props", this.props);
+    const classesList = this.props.classes;
 
     return (
       <Row>
@@ -56,7 +32,6 @@ class DisciplineContainer extends PureComponent {
             <p className="lead">{this.props.discipline.teacher}</p>
             <hr className="my-2" />
             <p>Gerencie suas presenças</p>
-
           </Jumbotron>
         </Col>
 
@@ -72,32 +47,23 @@ class DisciplineContainer extends PureComponent {
             </thead>
 
             <tbody>
-              {classesList
-                .map(classe => (
-                  <tr key={classe.id}>
-                    <td>{classe.date}</td>
-                    <td>Aula {classe.rep}</td>
-                    <td>{classe.status}</td>
-                    <td>
-                      <Button outline color='primary'>Fui</Button>{' '}
-                      <Button outline color='danger'>Faltei</Button>{' '}
-                      {classe.id.length > 5 && <Button outline color='secondary'>Resetar</Button>}
-                    </td>
-                  </tr>
-                ))}
+              {classesList.map(classe => (
+                <ClasseItem classe={classe} onAttend={this.attendClass} onMiss={this.missClass} onReset={this.resetClass} />
+              ))}
             </tbody>
           </Table>
         </Col>
       </Row>
-    )
+    );
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return {
-    course: state.courses.find(i => ownProps.match.params.id === i.id),
-    discipline: state.disciplines.find(i => ownProps.match.params.dId === i.id)
-  }
+  return { 
+    course: state.courses.find(i => ownProps.match.params.id === i.id), 
+    discipline: state.disciplines.find(i => ownProps.match.params.dId === i.id), 
+    classes: state.classes.filter(i => ownProps.match.params.dId === i.disciplineId) 
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {

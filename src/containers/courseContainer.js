@@ -75,15 +75,15 @@ class CourseContainer extends PureComponent {
 
     var weekBetween = d2.diff(nextDay, 'week');
 
-    console.log('WeekdayCalc: ', weekBetween+1, isoWeekday, d1.toISOString(), d2.toISOString());
+    //console.log('WeekdayCalc: ', weekBetween+1, isoWeekday, d1.toISOString(), d2.toISOString());
     return weekBetween + 1;
   }
 
   multipleWeedDaysCount(d1, d2, classDays) {
-    console.log('CD',classDays);
+    //console.log('CD',classDays);
 
     return Object.values(classDays).reduce((acc, cur, i) => {
-      console.log('Weekday', Number(cur), i+1);
+      //console.log('Weekday', Number(cur), i+1);
       return acc += this.weekDaysBetween(d1, d2, i+1) * Number(cur);
     }, 0);
   }
@@ -130,19 +130,35 @@ class CourseContainer extends PureComponent {
     this.props.actions.removeDiscipline(discipline.id);
   }
 
-  render() {
-    console.log(this.state);
+  allowedMisses(discipline) {
+    const totalClasses = discipline.classes.length;
+    const allowedMisses = totalClasses * 0.25;
+    return allowedMisses;
+  }
 
-    return (
-      <Row>
+  availbleMisses(discipline) {
+    const misses = discipline.classes.filter(c => c.wentTo === false).length;
+    const allowedMisses = this.allowedMisses(discipline);
+    return `${misses} / ${allowedMisses}`
+  }
+
+  remainingClasses(discipline) {
+    const today = moment();
+    const remaining = discipline.classes.filter(c => moment(c.date, 'DD/MM/YYYY').isAfter(today)).length;
+    return remaining
+  }
+
+  render() {
+    //console.log(this.state);
+
+    return <Row>
         <Col md={12}>
           <Jumbotron style={{ marginTop: 20 }}>
-            <Link to='/courses'>Voltar</Link>
+            <Link to="/courses">Voltar</Link>
             <h1 className="display-3">{this.props.course.name}</h1>
             <p className="lead">{this.props.course.location}</p>
             <hr className="my-2" />
             <p>Cadastre as matérias que você está cursando neste curso.</p>
-
           </Jumbotron>
         </Col>
 
@@ -153,28 +169,53 @@ class CourseContainer extends PureComponent {
                 <th>Nome</th>
                 <th>Professor</th>
                 <th>Total de Aulas</th>
-                <th>Toal de Horas</th>
+                <th>Total de Horas</th>
+                <th>Aulas Restantes</th>
+                <th>Faltas</th>
                 <th>Ações</th>
               </tr>
             </thead>
 
             <tbody>
-              {this.props.disciplines
-                .map(discipline => (
-                  <tr key={discipline.id}>
-                    <td>{discipline.name}</td>
-                    <td>{discipline.teacher}</td>
-                    <td>{this.calcTotalOfClasses(discipline)}</td>
-                    <td>{this.calcTotalOfHours(discipline)}</td>
-                    <td>
-                      <Button onClick={() => { this.onEditClick(discipline) }} outline color='secondary'>Editar</Button>{' '}
-                      <Button onClick={() => { this.onRemoveClick(discipline) }} outline color='danger'>Remover</Button>{' '}
-                      <Link to={`/courses/${this.props.course.id}/${discipline.id}`}>
-                        <Button outline color='primary'>Selecionar</Button>{' '}
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+              {this.props.disciplines.map(discipline => (
+                <tr key={discipline.id}>
+                  <td>{discipline.name}</td>
+                  <td>{discipline.teacher}</td>
+                  <td>{this.calcTotalOfClasses(discipline)}</td>
+                  <td>{this.calcTotalOfHours(discipline)}</td>
+                  <td>{this.remainingClasses(discipline)}</td>
+                  <td>{this.availbleMisses(discipline)}</td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        this.onEditClick(discipline);
+                      }}
+                      outline
+                      color="secondary"
+                    >
+                      Editar
+                    </Button>{" "}
+                    <Button
+                      onClick={() => {
+                        this.onRemoveClick(discipline);
+                      }}
+                      outline
+                      color="danger"
+                    >
+                      Remover
+                    </Button>{" "}
+                    <Link
+                      to={`/courses/${this.props.course.id}/${
+                        discipline.id
+                      }`}
+                    >
+                      <Button outline color="primary">
+                        Selecionar
+                      </Button>{" "}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </Col>
@@ -183,22 +224,22 @@ class CourseContainer extends PureComponent {
           <Form>
             <FormGroup>
               <Label>Nome</Label>
-              <Input name='name' onChange={this.handleChange} value={this.state.discipline.name} />
+              <Input name="name" onChange={this.handleChange} value={this.state.discipline.name} />
             </FormGroup>
 
             <FormGroup>
               <Label>Professor</Label>
-              <Input name='teacher' onChange={this.handleChange} value={this.state.discipline.teacher} />
+              <Input name="teacher" onChange={this.handleChange} value={this.state.discipline.teacher} />
             </FormGroup>
 
             <FormGroup>
               <Label>Início</Label>
-              <Input name='startDate' onChange={this.handleChange} value={this.state.discipline.startDate} />
+              <Input name="startDate" onChange={this.handleChange} value={this.state.discipline.startDate} />
             </FormGroup>
 
             <FormGroup>
               <Label>Fim</Label>
-              <Input name='endDate' onChange={this.handleChange} value={this.state.discipline.endDate} />
+              <Input name="endDate" onChange={this.handleChange} value={this.state.discipline.endDate} />
             </FormGroup>
 
             <Label>Dias de Aula</Label>
@@ -207,49 +248,49 @@ class CourseContainer extends PureComponent {
               <Col md={3}>
                 <FormGroup>
                   <Label>Domingo</Label>
-                  <Input name='classDays.sun' onChange={this.handleChange} value={this.state.discipline.classDays.sun} />
+                  <Input name="classDays.sun" onChange={this.handleChange} value={this.state.discipline.classDays.sun} />
                 </FormGroup>
               </Col>
 
               <Col md={3}>
                 <FormGroup>
                   <Label>Segunda</Label>
-                  <Input name='classDays.mon' onChange={this.handleChange} value={this.state.discipline.classDays.mon} />
+                  <Input name="classDays.mon" onChange={this.handleChange} value={this.state.discipline.classDays.mon} />
                 </FormGroup>
               </Col>
 
               <Col md={3}>
                 <FormGroup>
                   <Label>Terça</Label>
-                  <Input name='classDays.tue' onChange={this.handleChange} value={this.state.discipline.classDays.tue} />
+                  <Input name="classDays.tue" onChange={this.handleChange} value={this.state.discipline.classDays.tue} />
                 </FormGroup>
               </Col>
 
               <Col md={3}>
                 <FormGroup>
                   <Label>Quarta</Label>
-                  <Input name='classDays.wed' onChange={this.handleChange} value={this.state.discipline.classDays.wed} />
+                  <Input name="classDays.wed" onChange={this.handleChange} value={this.state.discipline.classDays.wed} />
                 </FormGroup>
               </Col>
 
               <Col md={3}>
                 <FormGroup>
                   <Label>Quinta</Label>
-                  <Input name='classDays.thu' onChange={this.handleChange} value={this.state.discipline.classDays.thu} />
+                  <Input name="classDays.thu" onChange={this.handleChange} value={this.state.discipline.classDays.thu} />
                 </FormGroup>
               </Col>
 
               <Col md={3}>
                 <FormGroup>
                   <Label>Sexta</Label>
-                  <Input name='classDays.fri' onChange={this.handleChange} value={this.state.discipline.classDays.fri} />
+                  <Input name="classDays.fri" onChange={this.handleChange} value={this.state.discipline.classDays.fri} />
                 </FormGroup>
               </Col>
 
               <Col md={3}>
                 <FormGroup>
                   <Label>Sábado</Label>
-                  <Input name='classDays.sat' onChange={this.handleChange} value={this.state.discipline.classDays.sat} />
+                  <Input name="classDays.sat" onChange={this.handleChange} value={this.state.discipline.classDays.sat} />
                 </FormGroup>
               </Col>
 
@@ -257,27 +298,34 @@ class CourseContainer extends PureComponent {
                 <FormGroup>
                   <Label>Cada aula equivale a</Label>
                   <InputGroup>
-                    <Input name='classToHourRatio' onChange={this.handleChange} value={this.state.discipline.classToHourRatio} />
-                    <InputGroupAddon addonType="append">horas</InputGroupAddon>
+                    <Input name="classToHourRatio" onChange={this.handleChange} value={this.state.discipline.classToHourRatio} />
+                    <InputGroupAddon addonType="append">
+                      horas
+                    </InputGroupAddon>
                   </InputGroup>
                 </FormGroup>
               </Col>
             </Row>
 
-            <p>Total de Aulas: {this.calcTotalOfClasses(this.state.discipline)} aulas</p>
-            <p>Total de Horas: {this.calcTotalOfHours(this.state.discipline)} horas</p>
+            <p>
+              Total de Aulas:{" "}
+              {this.calcTotalOfClasses(this.state.discipline)} aulas
+            </p>
+            <p>
+              Total de Horas: {this.calcTotalOfHours(this.state.discipline)}{" "}
+              horas
+            </p>
             <Button onClick={this.onSubmit}>Salvar</Button>
           </Form>
         </Col>
-      </Row>
-    )
+      </Row>;
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
   return {
     course: state.courses.find(i => ownProps.match.params.id === i.id),
-    disciplines: state.disciplines.filter(i => i.courseId === ownProps.match.params.id)
+    disciplines: state.disciplines.filter(i => i.courseId === ownProps.match.params.id).map(d => ({...d, classes: state.classes.filter(c => c.disciplineId === d.id) }))
   }
 }
 
